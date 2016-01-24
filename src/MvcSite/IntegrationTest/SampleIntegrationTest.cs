@@ -1,15 +1,20 @@
-﻿using Xunit;
+﻿using Microsoft.AspNet.TestHost;
+using System.Net.Http;
+using Xunit;
 
 namespace MvcSite.IntegrationTest
 {
 	public class SampleIntegrationTest
     {
-		//Following http://xunit.github.io/docs/getting-started-dnx.html
-
 		[Fact]
-		public void Returns200()
+		public async void Returns200()
 		{
-			Assert.True(true);
+			var server = new TestServer(TestServer.CreateBuilder().UseEnvironment("Development").UseStartup<Startup>());
+			var client = server.CreateClient();
+			var request = new HttpRequestMessage(HttpMethod.Get, "/");
+
+			var result = await client.SendAsync(request);
+			Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK);
 		}
     }
 }
